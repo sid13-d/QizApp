@@ -1,0 +1,39 @@
+@import '../base/settings';
+
+#home{
+    background-image: url('../../assets/img/background.jpg');
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: space-evenly;
+    height: 100vh;
+    width: 100vw;
+
+    section {
+            background-color: rgba(0, 0, 0, 0.7);
+            height: 80%;
+            width: 35%;
+            padding-right: $md;
+            padding-left: $md;
+
+
+            .cube{
+                color: $orange;
+                align-items: center;
+            }
+
+            h1{
+                font-size: $lg;
+                text-align: center;
+                color: $off-white;
+            }
+
+            .play-button-container{
+                width: 100%;
+
+                a.play-button{
+                    background-color: $green;
+                }
+            }
+    }
+}

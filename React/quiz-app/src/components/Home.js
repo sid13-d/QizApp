@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 
 
+
 const Home = () => {
     return (
         <Fragment>
@@ -14,15 +15,15 @@ const Home = () => {
             </Helmet>
             <div id="home">
                 <section>
-                    <div>
-                    <Icon path={mdiCubeOutline} size={3} />
+                    <div style={{textAlign: 'center'}}>
+                    <Icon path={mdiCubeOutline} className="cube" size={4} />
                         
                     </div>
                     <h1>Quiz App</h1>
                     <div className="play-button-container">
                         <ul>
                             <li>
-                                <Link to="/play/instructions">play</Link>
+                                <Link to="/play/instructions"  className="play-button">play</Link>
                             </li>
                         </ul>
                     </div>
