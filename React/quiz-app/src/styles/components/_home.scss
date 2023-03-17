@@ -26,14 +26,79 @@
                 font-size: $lg;
                 text-align: center;
                 color: $off-white;
+                font-weight: 400;
             }
 
             .play-button-container{
                 width: 100%;
+               
 
                 a.play-button{
                     background-color: $green;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: $normal;
+                    display: block;
+                    border-radius: $button-radius;
+                    text-align: center;
+                }
+
+                a.play-button:hover{
+                    background-color: darken($color: #62dc4dbb, $amount: 0);
+                    font-weight: bold;
                 }
             }
+
+            .auth-container{
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                margin-top: $lg;
+
+                #login-button{
+                    background-color: rgba(64, 64, 248, 0.407);
+                    transition: background-color 1s ease-out 100ms;
+                    color: #fff;
+                    transition: color 1s ease-out 100ms;
+                }
+                #login-button:hover{
+                    background-color: darken($color: rgba(44, 44, 246, 0.619), $amount: 10%);
+                    width: 50%;
+                    color: darken($color: #fff, $amount: 10%);
+                    font-weight: bold;
+                }
+                 
+
+                #signup-button{
+                    background-color: $green-dark;
+                    transition: background-color 1s ease-out 100ms;
+                    color: #fff;
+                    transition: color 1s ease-out 100ms;
+                }
+                #signup-button:hover{
+                    background-color: darken($color: #22c106a9, $amount: 10%) ;
+                    width: 50%;
+                    color: darken($color: #fff, $amount: 10%);
+                    font-weight: bold;
+                }
+
+
+                .auth-buttons{
+                    color: #fff;
+                    border-radius: $button-radius;
+                    cursor: pointer;
+                    padding: $normal 0;
+                    padding-inline: $lg;
+                    text-align: center;
+                }
+            }
+    }
+}
+
+@media(max-width: 768px) {
+    #home section{
+      
+        width: 100%;
+        height: 100%;
     }
 }
