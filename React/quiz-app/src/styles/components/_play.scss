@@ -1,0 +1,87 @@
+
+.questions{
+    background-color: $off-white;
+    border-left: 5px solid rgb(23, 68, 116);
+    width: 80%;
+    margin: $lg auto 0 auto;
+    padding: $sm $md;
+
+    .lifeline-container{
+        display: flex;
+        justify-content: space-between;
+
+        .lifeline{
+            position: relative;
+            top: -5px;
+        }
+    }
+
+
+    h5{
+        text-align: center;
+        margin-bottom: $lg;
+        line-height: 1.5;
+    }
+
+    .options-container{
+        display: inline-block;
+        width: 50%;
+        
+
+        .options{
+            background-color: rgb(58, 100, 134);
+            border-radius: $button-radius;
+            color: whitesmoke;
+            cursor: pointer;
+            margin: $md auto;
+            padding-left: $normal;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            transition: 0.3s linear all;
+            width: 90%;
+        }
+
+        .options:hover{
+            background-color: rgb(93, 159, 213);
+        }
+    }
+
+}
+
+.button-container{
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 auto $sm auto;
+    padding: $md;
+    width: 80%;
+
+    button{
+        border: none;
+        color: whitesmoke;
+        cursor: pointer;
+        margin-right: $md;
+        padding: $xs $sm;
+
+        
+    }
+
+    button:first-child{
+        background-color: darken($color: rgb(93, 159, 213), $amount: 10%);
+        box-shadow: 1px 2px #b8b6b6;
+        
+    }
+
+    button:nth-child(2){
+        background-color: rgb(112, 205, 80);
+        box-shadow: 1px 2px #b8b6b6;
+        
+    }
+
+    button:nth-child(3){
+        background-color: rgb(212, 82, 35);
+        box-shadow: 1px 2px #b8b6b6;
+        
+    }
+
+   
+}
