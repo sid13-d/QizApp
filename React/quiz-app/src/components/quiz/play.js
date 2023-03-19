@@ -1,9 +1,9 @@
 import React, {Fragment} from "react";
 import {Helmet} from 'react-helmet';
 import Icon from '@mdi/react';
-import M from 'materialize-css';
 import {mdiTimerOutline, mdiChevronDoubleLeft, mdiChevronDoubleRight, mdiExitToApp, mdiSetCenter } from '@mdi/js';
 import {MCQ} from '../../question';
+import {useNavigate} from 'react-router-dom'
 
 class Play extends React.Component{
   
@@ -48,16 +48,32 @@ class Play extends React.Component{
 
     this.setState({
       random30: arr,
-      currQuestion: arr[0],
-      nextQuestion: arr[1],
-      previousQuestion: arr[0],
     }, () => {
-      console.log("The state hasbeen set", this.state.random30, "\n", this.state.currQuestion, "\n", this.state.nextQuestion);
-    
+      //console.log("The state hasbeen set", this.state.random30, "\n", this.state.currQuestion, "\n", this.state.nextQuestion);
+      this.setter(0);
     });
 
     
   }
+
+  setter(currIndex = this.state.currentQuestionIndex){
+    let curQues = this.state.random30[currIndex];
+    let nextQues = this.state.random30[currIndex + 1];
+    let prevQues;
+    if(currIndex === 0){
+      prevQues = this.state.random30[currIndex];
+    }else {
+    prevQues = this.state.random30[currIndex - 1];
+    }
+    console.log("the current : ", curQues, "the next : ", nextQues, "the prev : ", prevQues);
+    this.setState({
+        currQuestion: curQues,
+        nextQuestion: nextQues,
+        previousQuestion: prevQues,
+        
+    });
+  }
+
 
   optionHandler = (e) => {
     if(e.target.innerHTML.toLowerCase() === this.state.currQuestion["answer"].toLowerCase()){
@@ -74,12 +90,14 @@ class Play extends React.Component{
     let i = this.state.correctAnswer + 1;
     let index = this.state.currentQuestionIndex + 1;
     let noOfQuestions = this.state.noOfAnsweredQuestions + 1;
-    let currQuestion = this.state.random30[index];
+    //let currQuestion = this.state.random30[index];
     this.setState({
       correctAnswer: i,
       currentQuestionIndex: index,
-      currQuestion: currQuestion,
+      //currQuestion: currQuestion,
       noOfAnsweredQuestions: noOfQuestions
+  }, () => {
+      this.setter(index);
   });
   console.log(this.state.correctAnswer)
   }
@@ -89,17 +107,47 @@ class Play extends React.Component{
     let i = this.state.wrongAnswer + 1;
     let index = this.state.currentQuestionIndex + 1;
     let noOfQuestions = this.state.noOfAnsweredQuestions + 1;
-    let currQuestion = this.state.random30[index];
+    //let currQuestion = this.state.random30[index];
     this.setState({
       wrongAnswer: i,
       currentQuestionIndex: index,
-      currQuestion: currQuestion,
+      //currQuestion: currQuestion,
       noOfAnsweredQuestions: noOfQuestions
+  }, () => {
+    this.setter(index);
   });
   }
-      
+    
+
+  nextHandler = () => {
+    
+    let index = this.state.currentQuestionIndex + 1;
+    console.log(index);
+    this.setState({
+        currentQuestionIndex: index
+    }, () => {
+      this.setter(index);
+    })
+    
+  }
+
+  prevHandler = () => {
+    let index = this.state.currentQuestionIndex - 1;
+    if(index<0){
+      index = 0;
+    }
+    this.setState({
+      currentQuestionIndex: index
+    }, () => {
+      this.setter(index)
+    })
+  }
+
+
   
+
       render() {
+        
         return (
          
           <Fragment>
@@ -126,9 +174,9 @@ class Play extends React.Component{
             </div>
 
             <div className="button-container">
-                <button><Icon className="button-icon" path={mdiChevronDoubleLeft} size={0.8} /> Previous</button>
-                <button>Next <Icon path={mdiChevronDoubleRight} size={0.8} /></button>
-                <button><Icon path={mdiExitToApp} size={0.8} /> Quit</button>
+                <button onClick={this.prevHandler}><Icon className="button-icon" path={mdiChevronDoubleLeft} size={0.8} /> Previous</button>
+                <button id="next-button" onClick={this.nextHandler}>Next <Icon path={mdiChevronDoubleRight} size={0.8} /></button>
+                <QuitButton></QuitButton>
             </div>
             </div>
 
@@ -137,5 +185,19 @@ class Play extends React.Component{
       }
 
 }
+
+function QuitButton (){
+  const navigation = useNavigate();
+
+  
+
+  return(
+    <button onClick={() =>{
+      if(window.confirm("Are you sure you want to quit")){
+        navigation('/')
+      }
+    }}><Icon path={mdiExitToApp} size={0.8} /> Quit</button>
+  );
+ }
 
 export default Play;
