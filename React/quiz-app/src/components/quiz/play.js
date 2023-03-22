@@ -13,13 +13,14 @@ class Play extends React.Component{
       questions: MCQ,
       random30: [],
       currQuestion: {},
-      nextQuestion: {},
-      previousQuestion: {},
+      // nextQuestion: {},
+      // previousQuestion: {},
       answer: '',
       noOfAnsweredQuestions: 0,
       currentQuestionIndex: 0,
       correctAnswer: 0,
       wrongAnswer: 0,  
+      lifeLine: 2
     };
   }
   componentDidMount() {
@@ -49,7 +50,7 @@ class Play extends React.Component{
     this.setState({
       random30: arr,
     }, () => {
-      //console.log("The state hasbeen set", this.state.random30, "\n", this.state.currQuestion, "\n", this.state.nextQuestion);
+      console.log("The state hasbeen set", this.state.random30, "\n", this.state.currQuestion, "\n", this.state.nextQuestion);
       this.setter(0);
     });
 
@@ -84,6 +85,9 @@ class Play extends React.Component{
       console.log("The wrong answer is :", e.target.innerHTML.toLowerCase(), this.state.currQuestion["answer"].toLowerCase())
       this.wrongAnswer();
     }
+
+    this.showOptions();
+
   }
 
   correctAnswer = () => {
@@ -116,6 +120,7 @@ class Play extends React.Component{
   }, () => {
     this.setter(index);
   });
+  
   }
     
 
@@ -128,7 +133,8 @@ class Play extends React.Component{
     }, () => {
       this.setter(index);
     })
-    
+    this.showOptions();
+
   }
 
   prevHandler = () => {
@@ -141,22 +147,46 @@ class Play extends React.Component{
     }, () => {
       this.setter(index)
     })
+
+    this.showOptions();
   }
 
 
+  showOptions = () => {
+    console.log("show options called")
+    const options = Array.from(document.querySelectorAll('.options'))
+    options.forEach(option => {
+      option.style.display = 'block';
+    })
+  }
+
+  hintsHandler = () => {
   
+
+    const options = Array.from(document.querySelectorAll('.options'))
+    let cnt=3, noOp=0;
+    console.log("options arr: ", options[cnt].innerHTML, "type of it is : ", typeof(options[cnt].innerHTML))
+    console.log("the object answer is arr: ", this.state.currQuestion['answer'], "type of it is : ", typeof(this.state.currQuestion['answer']))
+    while( cnt >= 0){
+      if(options[cnt].innerHTML !== this.state.currQuestion['answer'] && noOp !== 2){
+        options[cnt].style.display = "none";
+        noOp = noOp + 1;
+      }
+      cnt = cnt - 1;
+    }
+  }
 
       render() {
         
         return (
-         
+          
           <Fragment>
              
             <Helmet><title>Quiz</title></Helmet>
             <div className="questions">
             <div className="lifeline-container">
                 <p>
-                    <span className="lifeline-icon"><Icon path={mdiSetCenter} size={1} /></span><span className="lifeline">2</span>
+                    <span className="lifeline-icon" onClick={this.hintsHandler}><Icon style={{color: "green"}} path={mdiSetCenter} size={1} /></span><span className="lifeline">{this.state.lifeLine}</span>
                 </p>
             </div>
             <div className="so-far">
