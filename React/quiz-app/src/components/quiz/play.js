@@ -3,7 +3,7 @@ import {Helmet} from 'react-helmet';
 import Icon from '@mdi/react';
 import {mdiTimerOutline, mdiChevronDoubleLeft, mdiChevronDoubleRight, mdiExitToApp, mdiSetCenter } from '@mdi/js';
 import {MCQ} from '../../question';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useHistory} from 'react-router-dom'
 
 class Play extends React.Component{
   
@@ -14,18 +14,22 @@ class Play extends React.Component{
       random30: [],
       currQuestion: {},
       // nextQuestion: {},
-      // previousQuestion: {},
+      // previousQuestion: {},xxxxxx  
       answer: '',
       noOfAnsweredQuestions: 0,
       currentQuestionIndex: 0,
       correctAnswer: 0,
       wrongAnswer: 0,  
-      lifeLine: 2
+      lifeLine: 2,
+      time: {}
     };
+
+    this.interval = null;
   }
   componentDidMount() {
  
     this.generateRandomThrity();
+    this.startTimer();
     
   }
 
@@ -176,6 +180,35 @@ class Play extends React.Component{
     }
   }
 
+  startTimer = () => {
+    const countDownTime = Date.now() + 5000;
+    this.interval = setInterval(() => {
+      const now = new Date();
+      const distance = countDownTime - now;
+
+     
+      const sec = Math.floor((distance % (1000 * 60 )) / 1000);
+      if(distance < 0){
+        clearInterval(this.interval);
+        this.setState({
+          time: {
+            sec: 0
+          },
+          
+        },() => {
+          //alert("The quiz has ended");
+         window.location.href = '/'
+        });
+      } else {
+        this.setState({
+          time: {
+            sec
+          }
+        })
+      }
+    }, 1000)
+  }
+
       render() {
         
         return (
@@ -191,7 +224,7 @@ class Play extends React.Component{
             </div>
             <div className="so-far">
                 <span>{this.state.noOfAnsweredQuestions}/30</span>
-                <span> 2:30 <Icon path={mdiTimerOutline} size={1} /></span>
+                <span> :{this.state.time["sec"]} <Icon path={mdiTimerOutline} size={1} /></span>
             </div>
             <h5>{this.state.random30[this.state.currentQuestionIndex]?.["question"]}</h5>
             <div className="options-container">
