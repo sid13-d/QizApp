@@ -4,6 +4,7 @@ import Icon from '@mdi/react';
 import {mdiTimerOutline, mdiChevronDoubleLeft, mdiChevronDoubleRight, mdiExitToApp, mdiSetCenter } from '@mdi/js';
 import {MCQ} from '../../question';
 import {useNavigate, useHistory} from 'react-router-dom'
+import classNames from "classnames";
 
 class Play extends React.Component{
   
@@ -13,13 +14,15 @@ class Play extends React.Component{
       questions: MCQ,
       random30: [],
       currQuestion: {},
-      // nextQuestion: {},
-      // previousQuestion: {},xxxxxx  
+      nextQuestion: {},
+      previousQuestion: {},
       answer: '',
       noOfAnsweredQuestions: 0,
       currentQuestionIndex: 0,
       correctAnswer: 0,
       wrongAnswer: 0,  
+      prevButtonDisabled: false,
+      nextButtonDisabled: false,
       lifeLine: 2,
       time: {}
     };
@@ -76,6 +79,8 @@ class Play extends React.Component{
         nextQuestion: nextQues,
         previousQuestion: prevQues,
         
+    }, () => {
+      this.handleDisableBtn();
     });
   }
 
@@ -105,7 +110,12 @@ class Play extends React.Component{
       //currQuestion: currQuestion,
       noOfAnsweredQuestions: noOfQuestions
   }, () => {
+    if(this.state.nextQuestion === undefined){
+      this.endGame();
+    }else {
+
       this.setter(index);
+    }
   });
   console.log(this.state.correctAnswer)
   }
@@ -122,7 +132,12 @@ class Play extends React.Component{
       //currQuestion: currQuestion,
       noOfAnsweredQuestions: noOfQuestions
   }, () => {
-    this.setter(index);
+    if(this.state.nextQuestion === undefined){
+      this.endGame();
+    }else {
+
+      this.setter(index);
+    }
   });
   
   }
@@ -172,41 +187,96 @@ class Play extends React.Component{
     console.log("options arr: ", options[cnt].innerHTML, "type of it is : ", typeof(options[cnt].innerHTML))
     console.log("the object answer is arr: ", this.state.currQuestion['answer'], "type of it is : ", typeof(this.state.currQuestion['answer']))
     while( cnt >= 0){
+      if(options[cnt].style.display === "none"){
+        alert("you have already used it here")
+        this.setState({
+          lifeLine: this.state.lifeLine + 1
+        })
+        break;
+      }
       if(options[cnt].innerHTML !== this.state.currQuestion['answer'] && noOp !== 2){
         options[cnt].style.display = "none";
         noOp = noOp + 1;
       }
       cnt = cnt - 1;
     }
+   
+
+      this.setState({
+        lifeLine: this.state.lifeLine - 1
+      })
+    
   }
 
-  startTimer = () => {
-    const countDownTime = Date.now() + 300000;
-    this.interval = setInterval(() => {
-      const now = new Date();
-      const distance = countDownTime - now;
+    startTimer = () => {
+      const countDownTime = Date.now() + 300000;
+      this.interval = setInterval(() => {
+        const now = new Date();
+        const distance = countDownTime - now;
 
-     
-      const sec = Math.floor((distance % (1000 * 60 )) / 1000);
-      if(distance < 0){
-        clearInterval(this.interval);
-        this.setState({
-          time: {
-            sec: 0
-          },
-          
-        },() => {
-          //alert("The quiz has ended");
-         window.location.href = '/'
-        });
-      } else {
-        this.setState({
-          time: {
-            sec
-          }
-        })
-      }
-    }, 1000)
+        const min = Math.floor((distance % (1000 * 60 * 60)) / (1000*60))
+        const sec = Math.floor((distance % (1000 * 60 )) / 1000);
+        if(distance < 0){
+          clearInterval(this.interval);
+          this.setState({
+            time: {
+              sec: 0
+            },
+            
+          },() => {
+            //alert("The quiz has ended");
+          window.location.href = '/'
+          });
+        } else {
+          this.setState({
+            time: {
+              sec,
+              min
+            }
+          })
+        }
+      }, 1000)
+    }
+
+  handleDisableBtn = () => {
+    if(this.state.previousQuestion === this.state.currQuestion){
+      this.setState({
+        prevButtonDisabled: true
+      });
+    }else {
+      this.setState({
+        prevButtonDisabled: false
+      });
+    }
+    if(this.state.nextQuestion === undefined){
+      this.setState({
+        nextButtonDisabled: true
+      });
+    }else {
+      this.setState({
+        nextButtonDisabled: false
+      });
+    }
+  }
+
+
+  //stats
+  endGame = () => {
+    alert("Quiz has ended");
+    const {state} = this;
+
+    const playerStats = {
+      score: state.score,
+      numberOfQuestions: state.numberOfQuestions,
+      answeredQuestions: state.noOfAnsweredQuestions,
+      correctAnswer: state.correctAnswer,
+      wrongAnswer: state.wrongAnswer,
+      fiftyUsed: state.lifeLine
+    }
+    const dataString = JSON.stringify(playerStats);
+    const encodedData = encodeURIComponent(dataString);
+    window.location.href = `/play/quizSummary?data=${encodedData}`;
+    
   }
 
       render() {
@@ -223,8 +293,8 @@ class Play extends React.Component{
                 </p>
             </div>
             <div className="so-far">
-                <span>{this.state.noOfAnsweredQuestions}/30</span>
-                <span> :{this.state.time["sec"]} <Icon path={mdiTimerOutline} size={1} /></span>
+                <span>{this.state.currentQuestionIndex}/30</span>
+                <span> {this.state.time["min"]} :{this.state.time["sec"]} <Icon path={mdiTimerOutline} size={1} /></span>
             </div>
             <h5>{this.state.random30[this.state.currentQuestionIndex]?.["question"]}</h5>
             <div className="options-container">
@@ -237,8 +307,19 @@ class Play extends React.Component{
             </div>
 
             <div className="button-container">
-                <button onClick={this.prevHandler}><Icon className="button-icon" path={mdiChevronDoubleLeft} size={0.8} /> Previous</button>
-                <button id="next-button" onClick={this.nextHandler}>Next <Icon path={mdiChevronDoubleRight} size={0.8} /></button>
+                <button 
+                className={classNames('', {'disable':this.state.prevButtonDisabled})}
+                onClick={this.prevHandler}>
+                  <Icon className="button-icon" path={mdiChevronDoubleLeft} size={0.8} /> 
+                  Previous</button>
+
+                <button 
+                className={classNames('', {'disable': this.state.nextButtonDisabled})}
+                id="next-button" 
+                onClick={this.nextHandler}>
+                  
+                  Next <Icon path={mdiChevronDoubleRight} size={0.8} />
+                  </button>
                 <QuitButton></QuitButton>
             </div>
             </div>
